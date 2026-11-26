@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>ROBO-platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div id="splash" class="splash" role="status">
+        <div class="logo-mark"><i></i><i></i><i></i></div>
+        <h1>ROBO-platform</h1>
+        <p>Инициализация системы</p>
+        <div class="loading"><i></i></div><noscript>Включите JavaScript для запуска приложения.</noscript>
+    </div>
+    <header class="top">
+        <div class="brand">
+            <div class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div><strong>ROBO<span>-platform</span></strong><small>ЦЕНТР УПРАВЛЕНИЯ</small></div>
+        </div>
+        <div class="header-actions"><span class="demo"><i class="indicator"></i> Симуляция</span><button id="theme"
+                class="icon-button" title="Переключить тему" aria-label="Переключить тему">☾</button></div>
+    </header>
+    <main>
+        <section class="intro">
+            <div>
+                <p class="eyebrow">УПРАВЛЕНИЕ / РОБОТ 01</p>
+                <h1>Панель оператора<span>.</span></h1>
+                <p class="muted">Доставка грузов внутри помещения</p>
+            </div>
+            <div class="connection"><i id="connectionDot" class="indicator"></i><span id="connectionText">Система
+                    активна</span></div>
+        </section>
+        <section class="stats" aria-label="Статистика робота">
+            <article class="panel stat">
+                <div class="stat-label">Вес груза <span>▣</span></div>
+                <div class="metric"><strong id="weight">0</strong><small> / 10 кг</small></div>
+                <div class="bar"><i id="weightBar"></i></div><small class="muted">Максимальная нагрузка 10 кг</small>
+            </article>
+            <article class="panel stat">
+                <div class="stat-label">Заряд батареи <span>ϟ</span></div>
+                <div class="metric"><strong id="battery">100</strong><small>%</small></div>
+                <div class="bar"><i id="batteryBar"></i></div><small class="muted" id="batteryHint">Батарея
+                    заряжена</small>
+            </article>
+            <article class="panel stat">
+                <div class="stat-label">Скорость <span>↗</span></div>
+                <div class="metric"><strong id="speed">0</strong><small> м/с</small></div>
+                <div class="bar"><i id="speedBar"></i></div><small class="muted" id="speedHint">Заданная скорость 0,8
+                    м/с</small>
+            </article>
+            <article class="panel stat">
+                <div class="stat-label">Статус робота <span>◉</span></div>
+                <div class="status-value"><i id="statusDot" class="indicator"></i><strong id="status">В ожидании
+                        груза</strong></div><small class="muted" id="statusHint">Готов к отправке</small>
+            </article>
+        </section>
+        <section class="workspace">
+            <article class="panel map-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">01 / НАВИГАЦИЯ</p>
+                        <h2>Карта помещения</h2>
+                    </div><span class="tag">8 СТАНЦИЙ</span>
+                </div>
+                <div class="map-stage" id="mapStage"><img src="assets/map.png"
+                        alt="План помещения с мебелью и восемью станциями" draggable="false"><svg id="mapSvg"
+                        viewBox="0 0 681 309" xmlns="http://www.w3.org/2000/svg" aria-label="Интерактивные станции">
+                        <defs>
+                            <clipPath id="topRoomClip">
+                                <rect x="359" y="11" width="242" height="104" />
+                            </clipPath>
+                        </defs>
+                        <g id="furnitureLayer" pointer-events="none">
+                            <image href="assets/locations/location0.png" x="471" y="0" width="127" height="115"
+                                clip-path="url(#topRoomClip)" />
+                            <image href="assets/locations/location1.png" x="92" y="163" width="50" height="45" />
+                            <image href="assets/locations/location2.png" x="184" y="193" width="81" height="71" />
+                            <image href="assets/locations/location3.png" x="642" y="170" width="25" height="71" />
+                            <image href="assets/locations/location4.png" x="317" y="156" width="46" height="69" />
+                            <image href="assets/locations/location5.png" x="317" y="201" width="46" height="69" />
+                            <image href="assets/locations/location6.png" x="441" y="218" width="120" height="45" />
+                            <image href="assets/locations/location7.png" x="460" y="165" width="84" height="40" />
+                            <image href="assets/locations/location8.png" x="629" y="232" width="38" height="65" />
+                            <image href="assets/locations/location9.png" x="297" y="186" width="25" height="71" />
+                        </g>
+                        <polyline id="routeLine" points="" />
+                        <g id="stationLayer"></g>
+                        <g id="robot" pointer-events="none" hidden>
+                            <rect x="-6" y="-6" width="12" height="12" fill="#D647A0" stroke="#211E26"
+                                stroke-width="1.5" />
+                            <path d="M-3 0H3M0 -3V3" stroke="#F1EDF5" stroke-width="1.4" />
+                        </g>
+                    </svg>
+                    <div class="map-popup" id="popup" role="dialog" aria-labelledby="popupName" hidden>
+                        <div class="popup-head"><strong id="popupName"></strong><button id="popupClose"
+                                aria-label="Закрыть окно">×</button></div>
+                        <div class="popup-eta" id="popupEta"></div><button class="primary" id="popupSend">Отправить
+                            ↗</button>
+                    </div>
+                </div>
+                <div class="legend"><span><i class="station-key"></i> Станция</span><span><i class="robot-key"></i>
+                        Робот / текущая станция</span><span><i class="route-key"></i> Маршрут</span></div>
+                <div class="trip">
+                    <div><small>ТЕКУЩАЯ ПОЗИЦИЯ</small><strong id="positionText">Станция 08</strong></div>
+                    <div><small>НАЗНАЧЕНИЕ</small><strong id="targetText">—</strong></div>
+                    <div><small>ДО ПРИБЫТИЯ</small><strong id="tripTime">—</strong></div>
+                    <div id="tripProgress" class="bar" hidden><i id="tripBar"></i></div>
+                </div>
+            </article>
+            <article class="panel stations-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">02 / ДОСТАВКА</p>
+                        <h2>Станции</h2>
+                    </div><span class="count">08</span>
+                </div>
+                <p class="muted station-intro">Выберите пункт назначения</p>
+                <div id="stationList"></div>
+            </article>
+        </section>
+        <section class="bottom-grid">
+            <article class="panel control-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">03 / КОНТРОЛЬ</p>
+                        <h2>Управление роботом</h2>
+                    </div><button class="secondary" id="power">⏻ Выключить</button>
+                </div>
+                <div class="speed-control"><label for="speedInput">Заданная скорость <output id="speedOutput">0,8
+                            м/с</output></label><input id="speedInput" type="range" min="0.2" max="1.5" value="0.8"
+                        step="0.1"></div>
+                <div class="action-row"><button class="secondary" id="stop">■ Остановить</button><button
+                        class="secondary" id="resetError">↻ Сброс ошибки</button></div>
+                <details>
+                    <summary>Диагностика симуляции</summary>
+                    <div class="action-row"><button class="secondary" id="simulateError">Симулировать
+                            ошибку</button><button class="secondary" id="simulateCrash">Симулировать
+                            столкновение</button></div>
+                </details>
+            </article>
+            <article class="panel radio-panel">
+                <div class="panel-head">
+                    <div>
+                        <p class="eyebrow">04 / АУДИО</p>
+                        <h2>ROBO radio</h2>
+                    </div>
+                </div>
+                <div class="track-list" id="trackList"><button class="track" data-track="0">PoPiPo</button><button
+                        class="track" data-track="1">Spider-Man</button><button class="track" data-track="2">Star
+                        Wars</button><button class="track" data-track="3">Bad Apple!!</button></div>
+                <div class="audio-progress">
+                    <div class="audio-time"><span id="audioElapsed">0:00</span><span>0:10</span></div><progress
+                        id="audioProgress" max="10" value="0" aria-label="Прогресс мелодии"></progress>
+                </div>
+                <div class="volume"><label for="volume">Громкость <output id="volumeOutput">35%</output></label><input
+                        id="volume" type="range" min="0" max="1" step="0.01" value="0.35"></div>
+            </article>
+        </section>
+        <footer><span>ROBO-platform / v3.0</span><span id="saveInfo">Состояние сохраняется на
+                устройстве</span><span>Локальная симуляция</span></footer>
+    </main>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <!-- Встроенный исходный ES-модуль карты. Импортируется через Blob URL для работы без сервера. -->
+    <script type="text/plain" id="mapModule">
+export const stations = [{id:1,x:371,y:75},{id:2,x:64,y:180},{id:3,x:302,y:180},{id:4,x:371,y:180},{id:5,x:435,y:180},{id:6,x:153,y:285},{id:7,x:618,y:285},{id:8,x:454,y:60}].map(s=>({...s,name:`Станция ${String(s.id).padStart(2,'0')}`}));
+export const scale=0.025;
+export const station=id=>stations.find(s=>s.id===id);
+const grid=`00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111111110000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00001111111111111111111111111111111111111111111111111111111111111111111111111111111100011111111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000111111111110000000000011111111111111000000000000011111111111111000000000000001111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000111111111110000000000011111111111111000000000000011111111111111000000000000001111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000111111111100000000000011111111111111000000000000011111111111111000000000000011111111111111100000000000000000000000000000000000000000000000000000000000000000
+00000000000000111111111000000000000011111111111111111111111111111111111111111000000000001111111111111111111111111110000000000000000000001111111111111111111111111000110000
+00000000000000111111111000000000000011111111111111111111111111111111111111111000000000001111111111111111111111111110000000000000000000001111111111111111111111111000010000
+00000000000000111111111000000000000011111111111111111111111111111111111111110000000000000111111111111111111111111110000000000000000000001111111111111111111111111000010000
+00000000000000111111111000000000000011111111111111111111111111111111111111100000000000000111111111111111111111111110000000000000000000001111111111111111111111111000010000
+00000000000000111111111100000000000011111111111111111111111111111111111111100000000000000111111111111111111111111110000000000000000000001111111111111111111111111000000000
+00000000000000111111111100000000000011111111111111111111100011111111111111100000000000000011111111111111111111111110000000000000000000001111111111111111111111111000000000
+00000000000000111111111100000000000011111111111111110000000000011111111111100000000000000011111111111111111111111110000000000000000000011111111111111111111111111000000000
+00000000000000111111111100011111100011111111111110000000000000001111111111100000000000000011111111111111111111111110000000000011111111111111111111111111111111111000000000
+00000000000000111111111111111111100011111111111100000000000000000111111111100000000000000011111111111111111111111111111111111111111111111111111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111100000000000000011111111111111111111111111111111111111111111111111111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111100000000000000011111111111111111111111111111111111111111111111111111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111100000000000000111111111111111111111111111111111111111111111111111111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111000000000000001111111111111111111111111110000000000000000000000001111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111000000000000000111111111111111111111100000000000000000000000000001111111111111111111111000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111000000000000000111111111111111111111100000000000000000000000000001111111111111111111000000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111000000000000000111111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111000000000000000000111111111000000000000000011111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111100000000000000000111111111100000000000000011111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111100000000000000000111111111100000000000000011111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111100000000000000000111111111110000000000000011111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111100000000000000000111111111111000000000000011111111111111111111100000000000000000000000000001111111111111111110000000000000
+00000000000000111111111111111111100011111111111110000000001111111111111111111000000000000011111111111111111111100000000000000000000011111111111111111111111110000000000000
+00000000000000111111111111111111100011111111111111111111111111111111111111111000000000000001111111111111111111111111111111111111111111111111111111111111111111000000000000
+00000000000000111111111111111111100011111111111111111111111111111111111111111000000000000001111111111111111111111111111111111111111111111111111111111111111111000000000000
+00000000000000111111111111111111100011111111111111111111111111111111111111111000000000000001111111111111111111111111111111111111111111111111111111111111111111000000000000
+00000000000000111111111110000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111000000000000
+00000000000000111111111110000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000
+00000000000000111111111110000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000
+00000000000000111111111110000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111100000000000
+00000000000000111111111110000000000011111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`.trim().split('\n');
+const step=4, cols=grid[0].length, rows=grid.length;
+const walk=(x,y)=>x>=0&&y>=0&&x<cols&&y<rows&&grid[y][x]==='1';
+const key=(x,y)=>y*cols+x;
+const point=k=>({x:k%cols*step+2,y:Math.floor(k/cols)*step+2});
+export const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+export const length=path=>path.slice(1).reduce((v,p,i)=>v+distance(path[i],p),0);
+function nearest(p){let best=-1,d=Infinity;for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){if(!walk(x,y))continue;const nd=(p.x-x*step-2)**2+(p.y-y*step-2)**2;if(nd<d){d=nd;best=key(x,y);}}return best;}
+export function route(from,to){
+ if(distance(from,to)<.01)return [{x:from.x,y:from.y}];
+ const start=nearest(from),end=nearest(to),dest=point(end),open=new Set([start]),cost=new Map([[start,0]]),prev=new Map();
+ const dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+ while(open.size){let cur=-1,best=Infinity;for(const k of open){const f=cost.get(k)+distance(point(k),dest)/step;if(f<best){best=f;cur=k;}}
+ if(cur===end){const keys=[cur];while(prev.has(keys[0]))keys.unshift(prev.get(keys[0]));const raw=[{x:from.x,y:from.y},...keys.map(point),{x:to.x,y:to.y}],result=[];for(const p of raw){if(result.length&&distance(p,result.at(-1))<.01)continue;if(result.length>1){const a=result.at(-2),b=result.at(-1),cross=(b.x-a.x)*(p.y-b.y)-(b.y-a.y)*(p.x-b.x),dot=(b.x-a.x)*(p.x-b.x)+(b.y-a.y)*(p.y-b.y);if(Math.abs(cross)<.001&&dot>0)result.pop();}result.push(p);}return result;}
+ open.delete(cur);const x=cur%cols,y=Math.floor(cur/cols);for(const [dx,dy] of dirs){if(!walk(x+dx,y+dy)||(dx&&dy&&(!walk(x+dx,y)||!walk(x,y+dy))))continue;const next=key(x+dx,y+dy),g=cost.get(cur)+Math.hypot(dx,dy);if(g<(cost.get(next)??Infinity)){cost.set(next,g);prev.set(next,cur);open.add(next);}}
+ }return null;
+}
+export function positionAt(path,f){if(f<=0)return {...path[0]};if(f>=1)return {...path.at(-1)};let remain=length(path)*f;for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],l=distance(a,b);if(l&&remain<=l){const t=remain/l;return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};}remain-=l;}return {...path.at(-1)};}
+</script>
+    <script type="module">
+        const $ = id => document.getElementById(id);
+        const url = URL.createObjectURL(new Blob([$('mapModule').textContent], { type: 'text/javascript' }));
+        try { const map = await import(url); init(map); } catch (error) { console.error(error); $('splash').querySelector('p').textContent = 'Ошибка запуска. Откройте приложение в современном браузере.'; $('splash').querySelector('.loading').hidden = true; } finally { URL.revokeObjectURL(url); }
+        function init({ stations, station, scale, route, length, positionAt, distance }) {
+            const KEY = 'robo-platform.v3'; const STATUS = { off: 'Выключен', idle: 'В ожидании груза', moving: 'Доставляет', error: 'Ошибка', crash: 'Врезался', singing: 'Поет' };
+            const clamp = (n, a, b) => Math.max(a, Math.min(b, n)), finite = (n, f) => Number.isFinite(n) ? n : f, fmt = n => Number(n.toFixed(1)).toLocaleString('ru-RU');
+            const validPoint = p => p && Number.isFinite(p.x) && Number.isFinite(p.y) && p.x >= 0 && p.x < 681 && p.y >= 0 && p.y < 309;
+            function fresh() { return { version: 3, power: true, status: 'idle', stationId: 8, position: { x: 454, y: 60 }, weight: 0, battery: 100, speed: .8, theme: 'light', volume: .35, trip: null }; }
+            function load() { const d = fresh(); try { let v = JSON.parse(localStorage.getItem(KEY)); if (v?.version !== 3) { const old = JSON.parse(localStorage.getItem('robo-platform.v2')); if (old?.version !== 2) return d; const id = station(old.stationId) ? old.stationId : 8; v = { ...old, version: 3, stationId: id, position: { x: station(id).x, y: station(id).y }, trip: null, status: old.power ? 'idle' : 'off' }; } const s = { ...d, ...v }; s.position = validPoint(v.position) ? v.position : d.position; s.stationId = station(v.stationId) ? v.stationId : null; if (s.stationId) s.position = { x: station(s.stationId).x, y: station(s.stationId).y }; s.weight = clamp(finite(v.weight, 0), 0, 10); s.battery = clamp(finite(v.battery, 100), 0, 100); s.speed = clamp(finite(v.speed, .8), .2, 1.5); s.volume = clamp(finite(v.volume, .35), 0, 1); s.theme = v.theme === 'dark' ? 'dark' : 'light'; s.power = !!v.power; const t = v.trip; s.trip = s.power && v.status === 'moving' && t && station(t.targetId) && Array.isArray(t.path) && t.path.length > 1 && t.path.every(validPoint) && Number.isFinite(t.startedAt) && Number.isFinite(t.duration) && t.duration > 0 && Number.isFinite(t.startBattery) && Number.isFinite(t.drain) ? t : null; s.status = !s.power ? 'off' : s.trip ? 'moving' : ['idle', 'crash', 'error'].includes(v.status) ? v.status : 'idle'; if (s.trip) s.stationId = null; return s; } catch { return d; } }
+            const s = load(); let selected = null, toastTimer, lastRender = 0, cacheKey = '', cache = new Map(); const rows = new Map(), markers = new Map();
+            function save() { try { localStorage.setItem(KEY, JSON.stringify(s)); $('saveInfo').textContent = 'Состояние сохраняется на устройстве'; } catch { $('saveInfo').textContent = 'Хранилище недоступно: позиция не сохранится'; } }
+            function notify(msg) { $('toast').textContent = msg; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').hidden = true, 4500); }
+            const canSend = () => s.power && s.status === 'idle' && s.battery > 0 && !s.trip;
+            const eta = secs => secs <= 0 ? 'На месте' : secs < 60 ? `~ ${Math.ceil(secs)} сек` : `~ ${Math.floor(Math.ceil(secs) / 60)} мин ${Math.ceil(secs) % 60} сек`;
+            function getPath(id) { const k = `${s.position.x},${s.position.y}`; if (k !== cacheKey) { cacheKey = k; cache.clear(); } if (!cache.has(id)) cache.set(id, route(s.position, station(id))); return cache.get(id); }
+            function estimate(id) { if (s.stationId === id && !s.trip) return 'Робот на месте'; if (s.trip) return s.trip.targetId === id ? 'В пути · ' + eta(Math.max(0, (s.trip.startedAt + s.trip.duration - Date.now()) / 1000)) : 'После завершения доставки'; const p = getPath(id); return p ? eta(length(p) * scale / s.speed) : 'Нет маршрута'; }
+            function showPopup(id) { selected = id; render(); $('popupSend').focus({ preventScroll: true }); }
+            function closePopup() { selected = null; render(); }
+            function positionPopup() { if (!selected || $('popup').hidden) return; const st = station(selected), stage = $('mapStage'), p = $('popup'), w = stage.clientWidth, h = stage.clientHeight, x = st.x / 681 * w, y = st.y / 309 * h, pw = p.offsetWidth, ph = p.offsetHeight, gap = 12; let left = x + gap, top = y - ph / 2; if (left + pw > w - 3) left = x - gap - pw; if (left < 3) { left = x - pw / 2; top = y + gap; if (top + ph > h - 3) top = y - gap - ph; } left = clamp(left, 3, Math.max(3, w - pw - 3)); top = clamp(top, 3, Math.max(3, h - ph - 3)); p.style.left = `${left}px`; p.style.top = `${top}px`; }
+            const ns = 'http://www.w3.org/2000/svg';
+            for (const st of stations) {
+                const g = document.createElementNS(ns, 'g'); g.classList.add('map-station'); g.setAttribute('transform', `translate(${st.x} ${st.y})`); g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button'); g.setAttribute('aria-label', st.name); const rect = document.createElementNS(ns, 'rect'); rect.setAttribute('x', '-12'); rect.setAttribute('y', '-12'); rect.setAttribute('width', '24'); rect.setAttribute('height', '24'); const t = document.createElementNS(ns, 'text'); t.textContent = String(st.id).padStart(2, '0'); g.append(rect, t); g.addEventListener('click', () => showPopup(st.id)); g.addEventListener('keydown', e => { if (['Enter', ' '].includes(e.key)) { e.preventDefault(); showPopup(st.id); } }); $('stationLayer').append(g); markers.set(st.id, g);
+                const row = document.createElement('div'); row.className = 'station-row'; const number = document.createElement('span'); number.className = 'station-number'; number.textContent = String(st.id).padStart(2, '0'); const info = document.createElement('div'); info.className = 'station-info'; const name = document.createElement('strong'); name.textContent = st.name; const desc = document.createElement('small'); info.append(name, desc); const button = document.createElement('button'); button.className = 'send'; button.textContent = 'Отправить ↗'; button.setAttribute('aria-label', `Отправить: ${st.name}`); button.addEventListener('click', () => send(st.id)); row.append(number, info, button); $('stationList').append(row); rows.set(st.id, { row, desc, button });
+            }
+            function render() {
+                document.documentElement.dataset.theme = s.theme; $('theme').textContent = s.theme === 'light' ? '☾' : '☀'; $('theme').setAttribute('aria-label', s.theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему'); $('weight').textContent = fmt(s.weight); $('weightBar').style.width = `${s.weight * 10}%`; $('battery').textContent = Math.round(s.battery); $('batteryBar').style.width = `${s.battery}%`; $('batteryBar').classList.toggle('low', s.battery <= 20); $('batteryHint').textContent = s.battery <= 0 ? 'Батарея разряжена' : s.battery <= 20 ? 'Низкий заряд' : s.battery >= 99 ? 'Батарея заряжена' : 'Доступный заряд'; $('speed').textContent = fmt(s.trip ? s.speed : 0); $('speedBar').style.width = `${s.trip ? s.speed / 1.5 * 100 : 0}%`; $('speedHint').textContent = `Заданная скорость ${fmt(s.speed)} м/с`;
+                const shownStatus = active >= 0 && s.power && !['error', 'crash'].includes(s.status) ? 'singing' : s.status; $('status').textContent = STATUS[shownStatus]; $('statusDot').dataset.status = shownStatus; $('connectionDot').dataset.status = s.status; $('connectionText').textContent = s.power ? 'Система активна' : 'Система выключена'; $('statusHint').textContent = { off: 'Питание отключено', idle: s.battery > 0 ? 'Готов к отправке' : 'Батарея разряжена', moving: 'Выполняется маршрут', error: 'Требуется сброс ошибки', crash: 'Движение заблокировано', singing: 'Воспроизводит мелодию' }[shownStatus];
+                const f = s.trip ? clamp((Date.now() - s.trip.startedAt) / s.trip.duration, 0, 1) : 0; const pos = s.trip ? positionAt(s.trip.path, f) : s.position; $('robot').toggleAttribute('hidden', !!s.stationId && !s.trip); $('robot').setAttribute('transform', `translate(${pos.x} ${pos.y})`); $('positionText').textContent = s.trip ? 'В движении' : station(s.stationId)?.name ?? 'Между станциями'; $('targetText').textContent = s.trip ? station(s.trip.targetId).name : '—'; $('tripTime').textContent = s.trip ? eta(Math.max(0, (s.trip.startedAt + s.trip.duration - Date.now()) / 1000)) : '—'; $('tripProgress').hidden = !s.trip; $('tripBar').style.width = `${f * 100}%`;
+                const preview = s.trip?.path ?? (selected && canSend() && selected !== s.stationId ? getPath(selected) : null); $('routeLine').setAttribute('points', preview ? preview.map(p => `${p.x},${p.y}`).join(' ') : '');
+                for (const st of stations) { const here = !s.trip && s.stationId === st.id, going = s.trip?.targetId === st.id; const { row, desc, button } = rows.get(st.id), marker = markers.get(st.id); row.classList.toggle('current', here); row.classList.toggle('selected', selected === st.id || going); marker.classList.toggle('current', here); marker.classList.toggle('selected', selected === st.id || going); marker.setAttribute('aria-label', st.name + (here ? ', робот на месте' : '')); marker.setAttribute('aria-pressed', String(selected === st.id)); desc.textContent = estimate(st.id); button.textContent = here ? 'На месте' : going ? 'В пути' : 'Отправить ↗'; button.disabled = here || !canSend() || !getPath(st.id); }
+                $('popup').hidden = selected === null; if (selected) { $('popupName').textContent = station(selected).name; $('popupEta').textContent = estimate(selected); $('popupSend').disabled = !canSend() || s.stationId === selected || !getPath(selected); $('popupSend').textContent = s.stationId === selected ? 'На месте' : 'Отправить ↗'; positionPopup(); }
+                $('speedInput').value = s.speed; $('speedInput').disabled = !!s.trip; $('speedOutput').textContent = `${fmt(s.speed)} м/с`; $('power').textContent = s.power ? '⏻ Выключить' : '⏻ Включить'; $('stop').disabled = !s.trip; $('resetError').disabled = !s.power || !['error', 'crash'].includes(s.status); $('simulateError').disabled = !s.power; $('simulateCrash').disabled = !s.power; buttons.forEach(b => b.disabled = !s.power || ['error', 'crash'].includes(s.status));
+            }
+            function send(id) { if (!canSend() || id === s.stationId) return; const path = getPath(id); if (!path || path.length < 2) { notify('Маршрут не найден'); return; } const meters = length(path) * scale, drain = meters * .22; if (s.battery < drain) { notify('Недостаточно заряда для доставки'); return; } s.trip = { targetId: id, path, startedAt: Date.now(), duration: Math.max(700, meters / s.speed * 1000), startBattery: s.battery, drain }; s.stationId = null; s.status = 'moving'; selected = null; save(); render(); notify(`Робот отправлен: ${station(id).name}`); }
+            function updateTrip(now = Date.now(), announce = true) { if (!s.trip) return; const t = s.trip, f = clamp((now - t.startedAt) / t.duration, 0, 1); s.battery = clamp(t.startBattery - t.drain * f, 0, 100); s.position = positionAt(t.path, f); if (f >= 1) { s.stationId = t.targetId; s.trip = null; s.status = 'idle'; save(); if (announce) notify(`Доставка завершена: ${station(s.stationId).name}`); } }
+            function interrupt(status) { if (['off', 'error', 'crash'].includes(status)) finishAudio(false); updateTrip(); s.trip = null; s.status = status; save(); render(); }
+            $('popupSend').addEventListener('click', () => { if (selected) send(selected); }); $('popupClose').addEventListener('click', closePopup); $('mapStage').addEventListener('click', e => { if (!e.target.closest('.map-station, .map-popup')) closePopup(); }); document.addEventListener('keydown', e => { if (e.key === 'Escape' && selected) closePopup(); }); window.addEventListener('resize', positionPopup);
+            $('theme').addEventListener('click', () => { s.theme = s.theme === 'light' ? 'dark' : 'light'; save(); render(); }); $('speedInput').addEventListener('input', e => { s.speed = Number(e.target.value); save(); render(); }); $('power').addEventListener('click', () => { if (s.power) { s.power = false; interrupt('off'); } else { s.power = true; s.status = 'idle'; save(); render(); } }); $('stop').addEventListener('click', () => { if (s.trip) { interrupt('idle'); notify('Движение остановлено'); } }); $('resetError').addEventListener('click', () => { if (s.power && ['error', 'crash'].includes(s.status)) { s.status = 'idle'; save(); render(); } }); $('simulateError').addEventListener('click', () => { if (s.power) interrupt('error'); }); $('simulateCrash').addEventListener('click', () => { if (s.power) interrupt('crash'); });
+            // Десятисекундная симуляция. Если локальная запись существует, она звучит без диалогов выбора.
+            const tracks = ['popipo.mp3', 'spider-man.mp3', 'star-wars.mp3', 'bad-apple.mp3'];
+            const buttons = [...document.querySelectorAll('.track')], DURATION = 10000;
+            let active = -1, audioStarted = 0, audioTimer = 0, audio = null;
+            function audioUI(elapsed = 0) {
+                buttons.forEach((b, i) => { b.classList.toggle('playing', i === active); b.setAttribute('aria-pressed', String(i === active)); b.disabled = !s.power || ['error', 'crash'].includes(s.status); });
+                $('audioProgress').value = elapsed / 1000; $('audioElapsed').textContent = `0:${String(Math.floor(elapsed / 1000)).padStart(2, '0')}`;
+            }
+            function finishAudio(completed = false) { clearTimeout(audioTimer); if (audio) { audio.pause(); audio = null; } active = -1; audioUI(completed ? DURATION : 0); }
+            function updateAudio() { if (active < 0) return; const elapsed = Math.min(DURATION, Math.max(0, Date.now() - audioStarted)); if (elapsed >= DURATION) { finishAudio(true); render(); } else audioUI(elapsed); }
+            function play(i) {
+                if (!s.power || ['error', 'crash'].includes(s.status) || i === active) return; finishAudio(false); active = i; audioStarted = Date.now(); audioUI(); render();
+                const recording = new Audio(`audio/${tracks[i]}`); recording.volume = s.volume; audio = recording; recording.play().catch(() => {/* Без записи продолжается тихая симуляция. */ });
+                audioTimer = setTimeout(() => { updateAudio(); }, DURATION);
+            }
+            buttons.forEach((b, i) => b.addEventListener('click', () => play(i)));
+            $('volume').value = s.volume; $('volumeOutput').textContent = `${Math.round(s.volume * 100)}%`; $('volume').addEventListener('input', e => { s.volume = Number(e.target.value); if (audio) audio.volume = s.volume; $('volumeOutput').textContent = `${Math.round(s.volume * 100)}%`; save(); }); audioUI();
+            updateTrip(Date.now(), false); save(); render(); function tick() { updateAudio(); if (s.trip) { updateTrip(); const now = performance.now(); if (!s.trip || now - lastRender >= 100) { render(); lastRender = now; } else $('robot').setAttribute('transform', `translate(${s.position.x} ${s.position.y})`); } requestAnimationFrame(tick); } requestAnimationFrame(tick); document.addEventListener('visibilitychange', () => { if (!document.hidden) { updateAudio(); updateTrip(); render(); } }); window.addEventListener('pagehide', () => { updateTrip(Date.now(), false); save(); }); setTimeout(() => { $('splash').classList.add('hide'); setTimeout(() => $('splash').hidden = true, 240); }, 650);
+        }
+    </script>
+</body>
+
+</html>
