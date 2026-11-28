@@ -18,8 +18,11 @@
     </div>
     <header class="top">
         <div class="brand">
-            <div class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div><strong>ROBO<span>-platform</span></strong><small>ЦЕНТР УПРАВЛЕНИЯ</small></div>
+            <!-- <div class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></div> -->
+            <div>
+                <strong>ROBO<span>-platform</span></strong>
+                <!-- <small>ЦЕНТР УПРАВЛЕНИЯ</small> -->
+            </div>
         </div>
         <div class="header-actions"><span class="demo"><i class="indicator"></i> Симуляция</span><button id="theme"
                 class="icon-button" title="Переключить тему" aria-label="Переключить тему">☾</button></div>
@@ -27,42 +30,55 @@
     <main>
         <section class="intro">
             <div>
-                <p class="eyebrow">УПРАВЛЕНИЕ / РОБОТ 01</p>
+                <p class="eyebrow">УПРАВЛЕНИЕ / РОБОТ-ДОСТАВЩИК</p>
                 <h1>Панель оператора<span>.</span></h1>
-                <p class="muted">Доставка грузов внутри помещения</p>
+                <!-- <p class="muted">Доставка грузов внутри помещения</p> -->
             </div>
             <div class="connection"><i id="connectionDot" class="indicator"></i><span id="connectionText">Система
                     активна</span></div>
         </section>
         <section class="stats" aria-label="Статистика робота">
             <article class="panel stat">
-                <div class="stat-label">Вес груза <span>▣</span></div>
+                <!-- <div class="stat-label">Вес груза <span>▣</span></div> -->
                 <div class="metric"><strong id="weight">0</strong><small> / 10 кг</small></div>
                 <div class="bar"><i id="weightBar"></i></div><small class="muted">Максимальная нагрузка 10 кг</small>
             </article>
-            <article class="panel stat">
-                <div class="stat-label">Заряд батареи <span>ϟ</span></div>
-                <div class="metric"><strong id="battery">100</strong><small>%</small></div>
-                <div class="bar"><i id="batteryBar"></i></div><small class="muted" id="batteryHint">Батарея
-                    заряжена</small>
+            <article class="panel stat status-panel">
+                <!-- <div class="stat-label">Статус робота <span>◉</span></div> -->
+                <div class="status-value">
+                    <i id="statusDot" class="indicator"></i>
+                    <strong id="status">В ожидании груза</strong>
+                </div>
+                <small class="muted" id="statusHint">Готов к отправке</small>
             </article>
             <article class="panel stat">
-                <div class="stat-label">Скорость <span>↗</span></div>
-                <div class="metric"><strong id="speed">0</strong><small> м/с</small></div>
-                <div class="bar"><i id="speedBar"></i></div><small class="muted" id="speedHint">Заданная скорость 0,8
-                    м/с</small>
+                <!-- <div class="stat-label">Заряд батареи <span>ϟ</span></div> -->
+                <div class="metric">
+                    <strong id="battery">100</strong>
+                    <small>%</small>
+                </div>
+                <div class="bar">
+                    <i id="batteryBar"></i>
+                </div><small class="muted" id="batteryHint">Батарея заряжена</small>
             </article>
             <article class="panel stat">
-                <div class="stat-label">Статус робота <span>◉</span></div>
-                <div class="status-value"><i id="statusDot" class="indicator"></i><strong id="status">В ожидании
-                        груза</strong></div><small class="muted" id="statusHint">Готов к отправке</small>
+                <!-- <div class="stat-label">Скорость <span>↗</span></div> -->
+                <div class="metric">
+                    <strong id="speed">0</strong>
+                    <small> м/с</small>
+                </div>
+                <div class="bar">
+                    <i id="speedBar"></i>
+                </div>
+                <small class="muted" id="speedHint">Заданная скорость 0,8 м/с</small>
             </article>
+
         </section>
         <section class="workspace">
             <article class="panel map-panel">
                 <div class="panel-head">
                     <div>
-                        <p class="eyebrow">01 / НАВИГАЦИЯ</p>
+                        <p class="eyebrow">// НАВИГАЦИЯ</p>
                         <h2>Карта помещения</h2>
                     </div><span class="tag">8 СТАНЦИЙ</span>
                 </div>
@@ -114,9 +130,10 @@
             <article class="panel stations-panel">
                 <div class="panel-head">
                     <div>
-                        <p class="eyebrow">02 / ДОСТАВКА</p>
+                        <p class="eyebrow">// ДОСТАВКА</p>
                         <h2>Станции</h2>
-                    </div><span class="count">08</span>
+                    </div>
+                    <!-- <span class="count">08</span> -->
                 </div>
                 <p class="muted station-intro">Выберите пункт назначения</p>
                 <div id="stationList"></div>
@@ -126,7 +143,7 @@
             <article class="panel control-panel">
                 <div class="panel-head">
                     <div>
-                        <p class="eyebrow">03 / КОНТРОЛЬ</p>
+                        <p class="eyebrow">// КОНТРОЛЬ</p>
                         <h2>Управление роботом</h2>
                     </div><button class="secondary" id="power">⏻ Выключить</button>
                 </div>
@@ -145,7 +162,7 @@
             <article class="panel radio-panel">
                 <div class="panel-head">
                     <div>
-                        <p class="eyebrow">04 / АУДИО</p>
+                        <p class="eyebrow">// АУДИО</p>
                         <h2>ROBO radio</h2>
                     </div>
                 </div>
@@ -160,7 +177,7 @@
                         id="volume" type="range" min="0" max="1" step="0.01" value="0.35"></div>
             </article>
         </section>
-        <footer><span>ROBO-platform / v3.0</span><span id="saveInfo">Состояние сохраняется на
+        <footer><span>ROBO-platform / v4.0</span><span id="saveInfo">Состояние сохраняется на
                 устройстве</span><span>Локальная симуляция</span></footer>
     </main>
     <div id="toast" role="status" aria-live="polite" hidden></div>
